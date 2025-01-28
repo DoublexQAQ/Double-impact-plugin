@@ -1,15 +1,18 @@
-import { Double_impact } from './impact.js';
+import ImpactCore from './impact.js';
 import fs from 'fs';
 
-export class Zigong extends Double_impact {
+export class Zigong extends plugin {
   constructor() {
     super({
+      name: "自宫功能",
+      event: "message",
       rule: [
         { reg: "^#?(自宫|砍掉牛牛|不要牛子)$", fnc: "zigong" },
         { reg: "^#?删除淫趴数据\\s*\\d*$", fnc: "deleteData" },
         { reg: "^#?修改牛子\\s*<@!*(\\d+)>\\s*(\\d+)$", fnc: "modifyData" }
       ]
     });
+    this.impact = new ImpactCore();
   }
 
   async zigong(e) {

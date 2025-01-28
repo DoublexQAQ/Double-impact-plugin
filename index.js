@@ -78,10 +78,13 @@ const modules = {
 const apps = {};
 for (const [file, className] of Object.entries(modules)) {
   try {
+    console.log(`正在加载: ${file}.js`);
     const module = await import(`./app/${file}.js`);
+    console.log(`找到类: ${className}`, Object.keys(module));
     apps[className] = module[className] || module.default;
     logger.info(`成功加载模块：${chalk.green(className)}`);
   } catch (err) {
+    console.error('加载失败详情:', err.stack);
     logger.error(`加载模块 ${file} 失败:`, err);
   }
 }

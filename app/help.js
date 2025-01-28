@@ -4,7 +4,7 @@ import { Common, Data } from '../components/index.js'
 import Theme from './theme.js'
 import path from 'path'
 import { segment } from 'oicq'
-import logger from '../utils/logger'
+const logger = global.logger || console;
 
 export class Help extends plugin {
   constructor() {
