@@ -2,6 +2,8 @@ import plugin from '../../../lib/plugins/plugin.js';
 import ImpactCore from './impact.js';
 import fs from 'fs';
 import YAML from 'yaml';
+import path from 'path';
+import logger from '../../../lib/utils/logger.js';
 
 export class Dajiao extends plugin {
   constructor() {
@@ -18,12 +20,31 @@ export class Dajiao extends plugin {
   async handleDajiao(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
+    // 初始化检查
+    const valid = this.impact.validateGroupInitialized(e.group_id);
+    if (!valid.valid) return e.reply(valid.message);
+
+    // 获取群数据
+    const groupData = this.impact.getGroupData(e.group_id);
+    if (!groupData.enabled) {
+      return e.reply('本群未开启淫趴功能');
+    }
+
+    // 获取用户数据
+    const userData = this.impact.getUserData(e.user_id);
+
     try {
-      const filePath = `${process.cwd()}/plugins/Double-impact-plugin/data/impact/${e.group_id}.json`;
+      const filePath = path.join(
+        process.cwd(), 
+        'plugins/Double-impact-plugin', 
+        'data', 
+        'groups', 
+        `${e.group_id}.json`
+      );
       let data = JSON.parse(fs.readFileSync(filePath));
 
-      if (data.cond == '0') {
-        return e.reply('本群没有开启淫趴，请本群的狗管理或机器人主人发送【#开启淫趴】指令开启本群淫趴吧~');
+      if (!data.enabled) {
+        return e.reply('本群未开启淫趴功能');
       }
 
       // 初始化用户数据
@@ -65,7 +86,12 @@ export class Dajiao extends plugin {
       return e.reply(msg);
 
     } catch (err) {
-      return e.reply('本群还没有淫趴文件，快发送【#淫趴初始化】来创建淫趴文件吧~');
+      logger.error(`[打胶功能] 群${e.group_id} 用户${e.user_id} 操作异常`, err);
+      await e.reply([
+        '打胶过程中发生意外，请联系管理员',
+        segment.image('https://xxx/error.png')
+      ]);
+      return true;
     }
   }
 } 

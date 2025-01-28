@@ -109,7 +109,11 @@ export default class ImpactCore extends plugin {
 
   // 获取群组文件路径
   getGroupFilePath(groupId) {
-    return path.join(this.pluginPath, `data/groups/${groupId}.json`);
+    return path.join(
+      this.pluginPath,
+      'data/groups',
+      `${groupId}.json`
+    );
   }
 
   // 获取用户文件路径

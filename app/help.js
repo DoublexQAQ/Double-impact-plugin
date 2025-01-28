@@ -30,6 +30,10 @@ export class Help extends plugin {
 
   async showHelp(e) {
     try {
+      // 初始化检查
+      const valid = this.impact.validateGroupInitialized(e.group_id);
+      if (!valid.valid) return e.reply(valid.message);
+
       const helpContent = [
         "=== Double插件帮助 ===",
         "1. 初始化: #淫趴初始化",
