@@ -1,18 +1,22 @@
-import { Double_impact } from './impact.js';
+import plugin from '../../../lib/plugins/plugin.js';
+import ImpactCore from './impact.js';
 import fs from 'fs';
 
-export class Chastity extends Double_impact {
+export class Chastity extends plugin {
   constructor() {
     super({
+      name: "贞操锁功能",
+      event: "message",
       rule: [
-        { reg: "^#?使用贞操锁$", fnc: "useChastityLock" },
-        { reg: "^#?解除贞操锁$", fnc: "removeChastityLock" },
+        { reg: "^#?使用贞操锁$", fnc: "useLock" },
+        { reg: "^#?解除贞操锁$", fnc: "removeLock" },
         { reg: "^#?强制解锁\\s*<@!*(\\d+)>$", fnc: "forceUnlock" }
       ]
     });
+    this.impact = new ImpactCore();
   }
 
-  async useChastityLock(e) {
+  async useLock(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
     try {
@@ -69,7 +73,7 @@ export class Chastity extends Double_impact {
     }
   }
 
-  async removeChastityLock(e) {
+  async removeLock(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
     try {

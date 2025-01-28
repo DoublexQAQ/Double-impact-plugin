@@ -1,17 +1,21 @@
-import { Double_impact } from './impact.js';
+import plugin from '../../../lib/plugins/plugin.js';
+import ImpactCore from './impact.js';
 import fs from 'fs';
 import YAML from 'yaml';
 
-export class Dajiao extends Double_impact {
+export class Dajiao extends plugin {
   constructor() {
     super({
+      name: "打胶功能",
+      event: "message",
       rule: [
-        { reg: "^#?(导管子|打胶|开导)$", fnc: "daoguanzi" }
+        { reg: "^#?(导管子|打胶|开导)$", fnc: "handleDajiao" }
       ]
     });
+    this.impact = new ImpactCore();
   }
 
-  async daoguanzi(e) {
+  async handleDajiao(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
     try {

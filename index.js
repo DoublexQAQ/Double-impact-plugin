@@ -4,7 +4,7 @@ import chalk from 'chalk';
 
 const logger = global.logger || console;
 const pluginName = 'Double-impact-plugin';
-const pluginPath = process.cwd() + '/plugins/' + pluginName;
+const pluginPath = path.join(process.cwd(), 'plugins/Double-impact-plugin');
 
 // ASCII 图案加载日志
 logger.info(`
@@ -62,36 +62,32 @@ function copyDefaultConfig() {
 
 copyDefaultConfig();
 
-let apps = {};
+// 修改模块加载方式
+const modules = {
+  'impact': 'ImpactCore',    // 核心模块
+  'juedou': 'Juedou',       // 决斗功能
+  'dajiao': 'Dajiao',       // 打胶功能
+  'phb': 'Phb',            // 排行榜
+  'zigong': 'Zigong',      // 自宫功能
+  'chastity': 'Chastity',  // 贞操锁
+  'baopi': 'Baopi',        // 割包皮
+  'help': 'Help',          // 帮助功能
+  'theme': 'Theme'         // 主题功能
+};
 
-// 加载功能模块
-try {
-  const appDir = `./plugins/${pluginName}/app`;
-  const files = fs.readdirSync(appDir).filter(file => file.endsWith('.js'));
-  let ret = [];
-
-  files.forEach((file) => {
-    ret.push(import(`./app/${file}`));
-  });
-
-  ret = await Promise.allSettled(ret);
-
-  for (let i in files) {
-    let name = files[i].replace('.js', '');
-    if (ret[i].status != 'fulfilled') {
-      logger.error(`载入插件错误：${logger.red(name)}`);
-      logger.error(ret[i].reason);
-      continue;
-    }
-    apps[name] = ret[i].value[Object.keys(ret[i].value)[0]];
+const apps = {};
+for (const [file, className] of Object.entries(modules)) {
+  try {
+    const module = await import(`./app/${file}.js`);
+    apps[className] = module[className] || module.default;
+    logger.info(`成功加载模块：${chalk.green(className)}`);
+  } catch (err) {
+    logger.error(`加载模块 ${file} 失败:`, err);
   }
-
-  logger.info('Double插件初始化完成');
-  logger.info(`~\t${chalk.green('Double交流群')}${'  '}${chalk.underline('563079037')}\t~`);
-  logger.info(logger.red('~~~~~~~~~~~~~~~~~~~~'));
-
-} catch (err) {
-  logger.error('加载插件失败', err);
 }
+
+logger.info('Double插件初始化完成');
+logger.info(`~\t${chalk.green('Double交流群')}${'  '}${chalk.underline('563079037')}\t~`);
+logger.info(chalk.red('~~~~~~~~~~~~~~~~~~~~'));
 
 export { apps };

@@ -1,21 +1,32 @@
-import { Double_impact } from './impact.js';
+import plugin from '../../../lib/plugins/plugin.js';
+import ImpactCore from './impact.js';
 import fs from 'fs';
+import path from 'path';
 
-export class Phb extends Double_impact {
+export class Phb extends plugin {
   constructor() {
     super({
+      name: "排行榜功能",
+      event: "message",
       rule: [
-        { reg: "^#?(导管子|打胶|开导)排行榜$", fnc: "dajiaophb" },
-        { reg: "^#?(牛|鸡|坤|j|J)(牛|子|坤|八|巴|8|鸡)排行榜$", fnc: "niuniuphb" }
+        { reg: "^#?牛子排行榜$", fnc: "handleNiuNiuRank" },
+        { reg: "^#?打胶排行榜$", fnc: "handleDajiaoRank" }
       ]
     });
+    this.impact = new ImpactCore();
   }
 
-  async niuniuphb(e) {
+  async handleNiuNiuRank(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
     try {
-      const filePath = `${process.cwd()}/plugins/Double-impact-plugin/data/impact/${e.group_id}.json`;
+      const filePath = path.join(
+        process.cwd(), 
+        'plugins/Double-impact-plugin', 
+        'data', 
+        'groups', 
+        `${e.group_id}.json`
+      );
       let data = JSON.parse(fs.readFileSync(filePath));
 
       if (data.cond == '0') {
@@ -57,11 +68,17 @@ export class Phb extends Double_impact {
     }
   }
 
-  async dajiaophb(e) {
+  async handleDajiaoRank(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
     try {
-      const filePath = `${process.cwd()}/plugins/Double-impact-plugin/data/impact/${e.group_id}.json`;
+      const filePath = path.join(
+        process.cwd(), 
+        'plugins/Double-impact-plugin', 
+        'data', 
+        'groups', 
+        `${e.group_id}.json`
+      );
       let data = JSON.parse(fs.readFileSync(filePath));
 
       if (data.cond == '0') {

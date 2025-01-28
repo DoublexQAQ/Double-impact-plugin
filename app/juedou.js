@@ -1,23 +1,25 @@
-import { ImpactCore } from './impact.js';
+import plugin from '../../../lib/plugins/plugin.js';
+import ImpactCore from './impact.js';
 import fs from 'fs';
+import path from 'path';
 
-export class Juedou extends ImpactCore {
+export class Juedou extends plugin {
   constructor() {
     super({
+      name: "决斗功能",
+      event: "message",
       rule: [
         { reg: "^#?决斗\\s*<@!(\\d+)>$", fnc: "handleJuedou" }
       ]
     });
+    this.impact = new ImpactCore();
   }
 
   async handleJuedou(e) {
-    // 先验证群组是否初始化
-    const validation = this.validateGroupInitialized(e.group_id);
-    if (!validation.valid) {
-      await e.reply(validation.message);
-      return true;
-    }
-
+    // 使用 this.impact 调用核心方法
+    const valid = this.impact.validateGroupInitialized(e.group_id);
+    if (!valid.valid) return e.reply(valid.message);
+    
     if (!this.validateEvent(e)) return;
 
     try {
@@ -70,7 +72,7 @@ export class Juedou extends ImpactCore {
       targetData.data[loser].long -= loss;
 
       // 保存数据
-      fs.writeFileSync(this.getGroupFilePath(e.group_id), JSON.stringify(groupData));
+      fs.writeFileSync(path.join(process.cwd(), 'plugins/Double-impact-plugin', 'data', 'impact', `${e.group_id}.json`), JSON.stringify(groupData));
       fs.writeFileSync(this.getUserFilePath(e.user_id), JSON.stringify(userData));
       fs.writeFileSync(this.getUserFilePath(targetId), JSON.stringify(targetData));
 
@@ -88,14 +90,18 @@ export class Juedou extends ImpactCore {
       }
 
     } catch (err) {
-      logger.error('[决斗功能] 处理失败', err);
-      await e.reply('决斗过程中发生错误');
+      logger.error(`[决斗功能] 群${e.group_id} 用户${e.user_id} 操作异常`, err);
+      await e.reply([
+        '决斗过程中发生意外，请联系管理员',
+        segment.image('https://xxx/error.png')
+      ]);
+      return true;
     }
     return true;
   }
 
   getGroupData(groupId) {
-    const filePath = this.getGroupFilePath(groupId);
+    const filePath = path.join(process.cwd(), 'plugins/Double-impact-plugin', 'data', 'impact', `${groupId}.json`);
     return JSON.parse(fs.readFileSync(filePath));
   }
 

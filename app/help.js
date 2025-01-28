@@ -2,12 +2,15 @@ import plugin from '../../../lib/plugins/plugin.js'
 import lodash from 'lodash'
 import { Common, Data } from '../components/index.js'
 import Theme from './theme.js'
+import path from 'path'
+import { segment } from 'oicq'
+import logger from '../utils/logger'
 
 export class Help extends plugin {
   constructor() {
     super({
       /** 功能名称 */
-      name: 'Help Plugin',
+      name: '帮助功能',
       /** 功能描述 */
       dsc: 'Provides help related functionalities',
       /** https://oicqjs.github.io/oicq/#events */
@@ -26,8 +29,26 @@ export class Help extends plugin {
   }
 
   async showHelp(e) {
-    // Implementation of showing help
-    e.reply('Help information...');
+    try {
+      const helpContent = [
+        "=== Double插件帮助 ===",
+        "1. 初始化: #淫趴初始化",
+        "2. 创建牛牛: #创建牛牛",
+        "3. 打胶: #打胶",
+        "4. 决斗: #决斗@群友",
+        "5. 排行榜: #牛子排行榜",
+        "6. 贞操锁: #使用贞操锁"
+      ].join('\n');
+      
+      await e.reply([
+        segment.image(`file://${path.join(this.pluginPath, 'resources/help.png')}`),
+        helpContent
+      ]);
+    } catch (err) {
+      logger.error('[帮助功能] 异常', err);
+      await e.reply('帮助信息生成失败');
+    }
+    return true;
   }
 }
 

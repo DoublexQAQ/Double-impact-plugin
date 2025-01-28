@@ -1,16 +1,20 @@
-import { Double_impact } from './impact.js';
+import plugin from '../../../lib/plugins/plugin.js';
+import ImpactCore from './impact.js';
 import fs from 'fs';
 
-export class Baopi extends Double_impact {
+export class Baopi extends plugin {
   constructor() {
     super({
+      name: "割包皮功能",
+      event: "message",
       rule: [
-        { reg: "^#?割包皮$", fnc: "gebaopi" }  // 割包皮指令
+        { reg: "^#?割包皮$", fnc: "handleBaopi" }
       ]
     });
+    this.impact = new ImpactCore();
   }
 
-  async gebaopi(e) {
+  async handleBaopi(e) {
     if (!e.group_id) return e.reply('该功能只能在群聊中使用哦~');
 
     try {
@@ -24,7 +28,7 @@ export class Baopi extends Double_impact {
       }
 
       // 获取用户数据，如果是新用户会自动创建
-      const userData = await this.initUserData(e.group_id, e.user_id);
+      const userData = await this.impact.getUserData(e.user_id);
 
       // 检查是否被贞操锁锁住
       if (userData.chastityLock) {

@@ -1,5 +1,6 @@
 import fs from 'fs'
 import YAML from 'yaml'
+import path from 'path'
 
 export class Data {
   static async importCfg(name) {
@@ -25,6 +26,11 @@ export class Data {
     }
 
     return { diyCfg: cfg, sysCfg: defCfg }
+  }
+
+  static async getConfig() {
+    const configPath = path.join(process.cwd(), 'plugins/Double-impact-plugin/config/impact.yaml');
+    return YAML.parse(fs.readFileSync(configPath, 'utf-8'));
   }
 }
 
