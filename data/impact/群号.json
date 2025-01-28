@@ -1,0 +1,18 @@
+{
+  "cond": "0",  // 0:关闭 1:开启
+  "data": {
+    "用户QQ号1": {
+      "long": 10,         // 牛子长度
+      "inject": 0,        // 注入量
+      "be_inject": 0,     // 被注入量
+      "dajiaocount": 0,   // 打胶次数
+      "cd_daoguan": 0,    // 打胶CD时间戳
+      "cd_juedou": 0,     // 决斗CD时间戳
+      "cd_riqunyou": 0,   // 日群友CD时间戳
+      "chastityLock": false  // 是否上锁
+    },
+    "用户QQ号2": {
+      // 同上结构
+    }
+  }
+} 

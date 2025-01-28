@@ -1,0 +1,34 @@
+# 基础配置
+long: 12  # 初始牛子长度，单位厘米
+
+# CD配置（所有时间都是秒）
+cd_daoguan: 300  # 打胶CD 5分钟
+cd_juedou: 600   # 决斗CD 10分钟
+cd_riqunyou: 900 # 日群友CD 15分钟
+
+# 打胶配置（增长相关）
+daoguan_low: 0.1    # 打胶最小增长，单位厘米
+daoguan_height: 2.0  # 打胶最大增长，单位厘米
+
+# 决斗配置
+juedou_low: 1.0     # 决斗最小增长，单位厘米
+juedou_height: 3.0  # 决斗最大增长，单位厘米
+juedou_mult: 1.5    # 失败惩罚倍数，比如赢家+2cm，输家就-3cm
+
+# 日群友配置
+riqunyou_least: 15        # 最小要求长度
+riqunyou_low: 2.0        # 最小损失
+riqunyou_height: 5.0     # 最大损失
+riqunyou_inject_low: 5   # 最小注入量
+riqunyou_inject_height: 20 # 最大注入量
+
+# 割包皮配置
+baopi_cd: 180           # 割包皮CD 3分钟
+baopi_big_chance: 0.05  # 大成功概率 5%
+baopi_success_chance: 0.5 # 普通成功概率 50%
+baopi_big_min: 5        # 大成功最小增长，单位厘米
+baopi_big_max: 15       # 大成功最大增长，单位厘米
+baopi_normal_min: 0.5   # 普通成功最小增长，单位厘米
+baopi_normal_max: 2.5   # 普通成功最大增长，单位厘米
+baopi_fail_min: 1       # 失败最小缩短，单位厘米
+baopi_fail_max: 4       # 失败最大缩短，单位厘米 

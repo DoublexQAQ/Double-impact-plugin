@@ -1,0 +1,54 @@
+# 基础配置
+base:
+  # CD时间(分钟)
+  cd: 30
+  # 打胶增长范围
+  dajiao_min: 0.1
+  dajiao_max: 0.5
+  
+# 决斗配置
+duel:
+  # 决斗CD(分钟)
+  cd: 60
+  # 胜利增长倍率
+  win_rate: 1.5
+  # 失败惩罚倍率
+  lose_rate: 0.8
+
+# 割包皮配置
+baopi:
+  # CD时间(小时)
+  cd: 24
+  # 成功率
+  success_rate: 0.4
+  # 暴击率
+  crit_rate: 0.1
+  # 普通增长范围
+  normal_min: 0.5
+  normal_max: 2
+  # 暴击增长范围
+  crit_min: 2
+  crit_max: 5
+
+# 贞操锁配置
+lock:
+  # 持续时间(小时)
+  duration: 12
+  # 使用CD(小时)
+  cd: 24
+
+# CD配置（秒）
+cd_daoguan: 300  # 打胶CD 5分钟
+cd_juedou: 600   # 决斗CD 10分钟
+cd_riqunyou: 900 # 日群友CD 15分钟
+
+# 打胶配置
+daoguan_low: 0.1    # 打胶最小增长
+daoguan_height: 2.0  # 打胶最大增长
+
+# 日群友配置
+riqunyou_least: 15        # 最小要求长度
+riqunyou_low: 2.0        # 最小损失
+riqunyou_height: 5.0     # 最大损失
+riqunyou_inject_low: 5   # 最小注入量
+riqunyou_inject_height: 20 # 最大注入量 
