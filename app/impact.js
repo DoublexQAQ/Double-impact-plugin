@@ -2,7 +2,6 @@ import plugin from '../../../lib/plugins/plugin.js';
 import YAML from 'yaml';
 import fs from 'fs';
 import path from 'path';
-import { copyFileSync, existsSync } from 'fs';
 
 const logger = global.logger || console;
 
@@ -38,9 +37,7 @@ export default class ImpactCore extends plugin {
 
     requiredDirs.forEach(dir => {
       const fullPath = path.join(this.pluginPath, dir);
-      if (!fs.existsSync(fullPath)) {
-        fs.mkdirSync(fullPath, { recursive: true });
-      }
+      ensureDirSync(fullPath);
     });
   }
 
@@ -51,7 +48,7 @@ export default class ImpactCore extends plugin {
       const defaultPath = path.join(this.pluginPath, 'def_config/impact.yaml');
       
       if (!fs.existsSync(configPath)) {
-        fs.copyFileSync(defaultPath, configPath);
+        fs.writeFileSync(configPath, fs.readFileSync(defaultPath));
       }
       
       return YAML.parse(fs.readFileSync(configPath, 'utf-8'));
@@ -112,4 +109,118 @@ export default class ImpactCore extends plugin {
 
   // 获取群组文件路径
   getGroupFilePath(groupId) {
-    return path.join(this.pluginPath, `
+    return path.join(this.pluginPath, `data/groups/${groupId}.json`);
+  }
+
+  // 获取用户文件路径
+  getUserFilePath(userId) {
+    return path.join(this.pluginPath, `data/users/${userId}.json`);
+  }
+
+  // 验证事件对象
+  validateEvent(e) {
+    if (!e?.isGroup) {
+      e?.reply?.('该功能只能在群聊中使用');
+      return false;
+    }
+    return true;
+  }
+
+  // 创建牛牛功能
+  async createNiuNiu(e) {
+    if (!this.validateEvent(e)) return;
+
+    try {
+      const groupFile = this.getGroupFilePath(e.group_id);
+      if (!fs.existsSync(groupFile)) {
+        return e.reply('本群尚未初始化，请管理员先发送【#淫趴初始化】');
+      }
+
+      const userFile = this.getUserFilePath(e.user_id);
+      if (fs.existsSync(userFile)) {
+        return e.reply('你已经拥有牛牛了，不要太贪心哦~');
+      }
+
+      // 初始化用户数据
+      const userData = {
+        userId: e.user_id,
+        length: this.config.base_length || 12,
+        inject: 0,
+        be_inject: 0,
+        cd: {
+          daoguan: 0,
+          juedou: 0
+        },
+        chastityLock: false,
+        created_at: Date.now()
+      };
+
+      fs.writeFileSync(userFile, JSON.stringify(userData, null, 2));
+      await e.reply([
+        `恭喜！你获得了一根${userData.length}cm的牛牛！`,
+        segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${e.user_id}`)
+      ]);
+    } catch (err) {
+      logger.error('[创建牛牛] 失败', err);
+      await e.reply('牛牛生成失败，请联系管理员');
+    }
+    return true;
+  }
+
+  // 查询牛牛状态
+  async checkNiuNiu(e) {
+    if (!this.validateEvent(e)) return;
+
+    try {
+      const userFile = this.getUserFilePath(e.user_id);
+      if (!fs.existsSync(userFile)) {
+        return e.reply('你还没有牛牛，发送【#创建牛牛】来获取吧~');
+      }
+
+      const userData = JSON.parse(fs.readFileSync(userFile));
+      const status = [
+        `🐮 牛牛状态 🐮`,
+        `长度：${userData.length.toFixed(2)}cm`,
+        `注射量：${userData.inject}ml`,
+        `被注射量：${userData.be_inject}ml`,
+        `贞操锁：${userData.chastityLock ? '已上锁' : '未上锁'}`
+      ].join('\n');
+
+      await e.reply([status, segment.image(`https://q1.qlogo.cn/g?b=qq&s=0&nk=${e.user_id}`)]);
+    } catch (err) {
+      logger.error('[查询牛牛] 失败', err);
+      await e.reply('查询失败，请稍后再试');
+    }
+    return true;
+  }
+
+  // 在原有验证方法中增加初始化检查
+  validateGroupInitialized(groupId) {
+    const groupFile = this.getGroupFilePath(groupId);
+    if (!fs.existsSync(groupFile)) {
+      return { valid: false, message: '本群尚未初始化，请管理员先发送【#淫趴初始化】' };
+    }
+    return { valid: true };
+  }
+
+  // 在ImpactCore类中添加统一数据访问方法
+  getUserData(userId) {
+    const filePath = path.join(this.pluginPath, 'data/users', `${userId}.json`);
+    try {
+      return JSON.parse(fs.readFileSync(filePath));
+    } catch {
+      return this.createUserData(userId);
+    }
+  }
+
+  getGroupData(groupId) {
+    const filePath = path.join(this.pluginPath, 'data/groups', `${groupId}.json`);
+    return JSON.parse(fs.readFileSync(filePath));
+  }
+}
+
+function ensureDirSync(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}

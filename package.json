@@ -4,7 +4,9 @@
     "author": "Double",
     "type": "module",
     "dependencies": {
+        "node-fetch": "^3.3.1",
         "yaml": "^2.2.1",
+        "puppeteer": "^19.11.1",
         "chalk": "^5.3.0"
     }
 }
