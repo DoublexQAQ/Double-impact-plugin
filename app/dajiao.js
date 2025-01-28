@@ -3,7 +3,7 @@ import ImpactCore from './impact.js';
 import fs from 'fs';
 import YAML from 'yaml';
 import path from 'path';
-import logger from '../../../lib/utils/logger.js';
+const logger = global.logger || console;
 
 export class Dajiao extends plugin {
   constructor() {
@@ -86,11 +86,8 @@ export class Dajiao extends plugin {
       return e.reply(msg);
 
     } catch (err) {
-      logger.error(`[打胶功能] 群${e.group_id} 用户${e.user_id} 操作异常`, err);
-      await e.reply([
-        '打胶过程中发生意外，请联系管理员',
-        segment.image('https://xxx/error.png')
-      ]);
+      console.error('[打胶功能] 错误:', err);
+      await e.reply('操作失败，请稍后再试');
       return true;
     }
   }
