@@ -11,6 +11,13 @@ export class Juedou extends ImpactCore {
   }
 
   async handleJuedou(e) {
+    // 先验证群组是否初始化
+    const validation = this.validateGroupInitialized(e.group_id);
+    if (!validation.valid) {
+      await e.reply(validation.message);
+      return true;
+    }
+
     if (!this.validateEvent(e)) return;
 
     try {
