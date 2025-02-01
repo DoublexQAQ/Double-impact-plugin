@@ -1,4 +1,4 @@
-# Double-impact-plugin
+# Double-impact-plugin 目前存在bug
 
 这是一个用于QQ群的淫趴小游戏插件，包含多种趣味功能。
 
